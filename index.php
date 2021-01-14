@@ -2,12 +2,11 @@
 $is_auth = rand(0, 1);
 
 $user_name = 'dez'; // укажите здесь ваше имя
-$num = "10 999.00";
-echo (float)$num;
+
 function price_format($price) {
     $price = ceil($price);
 
-    if((int)$price > 1000) {
+    if($price >= 1000) {
         $price = number_format($price, 0, '', ' ');
     }
     $price = $price.' ₽';
