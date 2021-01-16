@@ -17,17 +17,21 @@ function price_format($price) {
 }
 
 function get_lot_out_time($date_out) {
-    $date_current = date_create(date("Y-m-d H:i:s"));
-    $date_out = date_create($date_out);
+    $hours = 0;
+    $minutes = 0;
 
-    $diff = date_diff($date_out, $date_current);
+    $date_current = new DateTime();
+    $date_out = new DateTime($date_out);
 
-    $hours = $diff->days * 24 + $diff->h;
-    $hours = str_pad($hours, 2, "0", STR_PAD_LEFT);
-    $minutes = str_pad($diff->i, 2, "0", STR_PAD_LEFT);
+    $diff = $date_current->diff($date_out);
+
+    if (!$diff->invert) {
+        $hours = $diff->days * 24 + $diff->h;
+        $hours = str_pad($hours, 2, "0", STR_PAD_LEFT);
+        $minutes = str_pad($diff->i, 2, "0", STR_PAD_LEFT);
+    }
 
     return [$hours, $minutes];
-
 }
 
 $categories = [
@@ -52,7 +56,7 @@ $products = [
         "cat" => "Доски и лыжи",
         "price" => "159999",
         "img" => "img/lot-2.jpg",
-        "date_out" => "2021-01-15 22:00:00"
+        "date_out" => "2021-01-15 20:00:00"
     ],
     2 => [
         "name" => "Крепления Union Contact Pro 2015 года размер L/XL",
