@@ -16,6 +16,24 @@ function price_format($price) {
     return $price;
 }
 
+function get_lot_out_time($date_out) {
+    $hours = 0;
+    $minutes = 0;
+
+    $date_current = new DateTime();
+    $date_out = new DateTime($date_out);
+
+    $diff = $date_current->diff($date_out);
+
+    if (!$diff->invert) {
+        $hours = $diff->days * 24 + $diff->h;
+        $hours = str_pad($hours, 2, "0", STR_PAD_LEFT);
+        $minutes = str_pad($diff->i, 2, "0", STR_PAD_LEFT);
+    }
+
+    return [$hours, $minutes];
+}
+
 $categories = [
     "Доски и лыжи",
     "Крепления",
@@ -30,37 +48,43 @@ $products = [
         "name" => "2014 Rossignol District Snowboard",
         "cat" => "Доски и лыжи",
         "price" => "10999",
-        "img" => "img/lot-1.jpg"
+        "img" => "img/lot-1.jpg",
+        "date_out" => "2021-01-16"
     ],
     1 => [
         "name" => "DC Ply Mens 2016/2017 Snowboard",
         "cat" => "Доски и лыжи",
         "price" => "159999",
-        "img" => "img/lot-2.jpg"
+        "img" => "img/lot-2.jpg",
+        "date_out" => "2021-01-15 20:00:00"
     ],
     2 => [
         "name" => "Крепления Union Contact Pro 2015 года размер L/XL",
         "cat" => "Крепления",
         "price" => "8000",
-        "img" => "img/lot-3.jpg"
+        "img" => "img/lot-3.jpg",
+        "date_out" => "2021-01-17"
     ],
     3 => [
         "name" => "Ботинки для сноуборда DC Mutiny Charocal",
         "cat" => "Ботинки",
         "price" => "10999",
-        "img" => "img/lot-4.jpg"
+        "img" => "img/lot-4.jpg",
+        "date_out" => "2021-01-19"
     ],
     4 => [
         "name" => "Куртка для сноуборда DC Mutiny Charocal",
         "cat" => "Одежда",
         "price" => "7500",
-        "img" => "img/lot-5.jpg"
+        "img" => "img/lot-5.jpg",
+        "date_out" => "2021-01-18"
     ],
     5 => [
         "name" => "Маска Oakley Canopy",
         "cat" => "Разное",
         "price" => "5400",
-        "img" => "img/lot-6.jpg"
+        "img" => "img/lot-6.jpg",
+        "date_out" => "2021-01-21"
     ]
 ];
 

@@ -15,7 +15,9 @@
             <h2>Открытые лоты</h2>
         </div>
         <ul class="lots__list">
-            <?php foreach ($products as $product): ?>
+            <?php foreach ($products as $product):
+                $lot_time = get_lot_out_time($product['date_out']);
+            ?>
                 <li class="lots__item lot">
                     <div class="lot__image">
                         <img src="<?=$product['img']?>" width="350" height="260" alt="<?=$product['name']?>">
@@ -26,10 +28,10 @@
                         <div class="lot__state">
                             <div class="lot__rate">
                                 <span class="lot__amount">Стартовая цена</span>
-                                <span class="lot__cost"><?=price_format($product['price']);?></span>
+                                <span class="lot__cost"><?=price_format($product['price'])?></span>
                             </div>
-                            <div class="lot__timer timer">
-                                12:23
+                            <div class="lot__timer timer <?=$lot_time[0] < 1 ? 'timer--finishing': ''?>">
+                                <?=$lot_time[0].':'.$lot_time[1]?>
                             </div>
                         </div>
                     </div>
