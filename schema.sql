@@ -33,7 +33,7 @@ CREATE INDEX i_description ON lot(description(500));
 CREATE TABLE user (
   id INT AUTO_INCREMENT PRIMARY KEY,
   date_up TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  email VARCHAR(150) UNIQUE,
+  email VARCHAR(150) NOT NUll UNIQUE,
   name VARCHAR(150) NOT NUll,
   pass VARCHAR(255) NOT NUll,
   contact TEXT NOT NUll
