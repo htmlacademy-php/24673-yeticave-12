@@ -24,8 +24,8 @@ INSERT INTO rate (price, user_id, lot_id) VALUES ('11499', '2', '1'), ('11049', 
 -- Получить все категории
 SELECT * FROM categories;
 
--- Получить самые новые лоты, открытые.
-SELECT l.id as lot_id, l.title, l.price, l.img, r.price as new_price, c.title as title_cat FROM lot l LEFT JOIN rate r ON l.id = r.lot_id LEFT JOIN categories c ON l.cat_id = c.id WHERE l.date_out > NOW() ORDER BY l.date_up DESC;
+-- Получить самые новые открытые лоты.
+SELECT l.id as lot_id, l.title, l.price, l.img, r.price as new_price, c.title as title_cat FROM lot l LEFT JOIN rate r ON l.id = r.lot_id LEFT JOIN categories c ON l.cat_id = c.id WHERE l.date_out >= NOW() ORDER BY l.date_up DESC;
 
 -- Получить лот по id
 SELECT l.title, l.description, l.img, l.price, l.date_out, c.title as title_cat FROM lot l JOIN categories c ON l.cat_id = c.id WHERE l.id = 5;
