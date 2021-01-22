@@ -1,4 +1,10 @@
 <?php
+
+$bd = mysqli_connect("localhost", "root", "", "yeticave");
+if(!$bd) {
+    die("Ошибка подключения");
+}
+
 require ('helpers.php');
 
 $is_auth = rand(0, 1);
@@ -34,59 +40,25 @@ function get_lot_out_time($date_out) {
     return [$hours, $minutes];
 }
 
-$categories = [
-    "Доски и лыжи",
-    "Крепления",
-    "Ботинки",
-    "Одежда",
-    "Инструменты",
-    "Разное"
-];
+function query($bd, $sql, $type = "all") {
+    $result = mysqli_query($bd, $sql);
 
-$products = [
-    0 => [
-        "name" => "2014 Rossignol District Snowboard",
-        "cat" => "Доски и лыжи",
-        "price" => "10999",
-        "img" => "img/lot-1.jpg",
-        "date_out" => "2021-01-16"
-    ],
-    1 => [
-        "name" => "DC Ply Mens 2016/2017 Snowboard",
-        "cat" => "Доски и лыжи",
-        "price" => "159999",
-        "img" => "img/lot-2.jpg",
-        "date_out" => "2021-01-15 20:00:00"
-    ],
-    2 => [
-        "name" => "Крепления Union Contact Pro 2015 года размер L/XL",
-        "cat" => "Крепления",
-        "price" => "8000",
-        "img" => "img/lot-3.jpg",
-        "date_out" => "2021-01-17"
-    ],
-    3 => [
-        "name" => "Ботинки для сноуборда DC Mutiny Charocal",
-        "cat" => "Ботинки",
-        "price" => "10999",
-        "img" => "img/lot-4.jpg",
-        "date_out" => "2021-01-19"
-    ],
-    4 => [
-        "name" => "Куртка для сноуборда DC Mutiny Charocal",
-        "cat" => "Одежда",
-        "price" => "7500",
-        "img" => "img/lot-5.jpg",
-        "date_out" => "2021-01-18"
-    ],
-    5 => [
-        "name" => "Маска Oakley Canopy",
-        "cat" => "Разное",
-        "price" => "5400",
-        "img" => "img/lot-6.jpg",
-        "date_out" => "2021-01-21"
-    ]
-];
+    if(!$result) {
+        return $result;
+    }
+
+    if($type = "all") {
+        $result = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    } else {
+        $result = mysqli_fetch_assoc($result);
+    }
+
+    return $result;
+
+}
+
+$categories = query($bd,"SELECT * FROM categories");
+$products = query($bd,"SELECT l.id as lot_id, l.title, l.price, l.img, l.date_out, r.price as new_price, c.title as title_cat FROM lot l LEFT JOIN rate r ON l.id = r.lot_id LEFT JOIN categories c ON l.cat_id = c.id WHERE l.date_out >= NOW() ORDER BY l.date_up DESC");
 
 $main = include_template('main.php', $data = ['categories' => $categories, 'products' => $products]);
 $layout = include_template('layout.php', $data = ['content' => $main, 'title' => 'Главная',
