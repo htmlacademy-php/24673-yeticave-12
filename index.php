@@ -1,6 +1,7 @@
 <?php
 
 $bd = mysqli_connect("localhost", "root", "", "yeticave");
+mysqli_set_charset($bd,"utf8");
 if(!$bd) {
     die("Ошибка подключения");
 }
