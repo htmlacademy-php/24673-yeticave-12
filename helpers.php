@@ -198,12 +198,10 @@ function get_lot_out_time($date_out) {
 
 /**
  * Выполняет запрос в бд и возвращает массив
- * @param string $bd Подключение к бд
  * @param string $sql Запрос к бд
- * @param string $type Тип запроса, если отличен от all извлекает один ряд в виде ассоциативного массива
  * @return array Результат выполнения запроса в бд
  */
-function query($sql, $type = "all") {
+function query($sql) {
     $bd = bd();
     $result = mysqli_query($bd, $sql);
 
@@ -211,7 +209,7 @@ function query($sql, $type = "all") {
         return $result;
     }
 
-    if($type = "all") {
+    if($result->num_rows > 1) {
         $result = mysqli_fetch_all($result, MYSQLI_ASSOC);
     } else {
         $result = mysqli_fetch_assoc($result);
@@ -221,4 +219,68 @@ function query($sql, $type = "all") {
 
 }
 
+/**
+ * Выполняет подготовленое выражение в бд
+ * @param string $sql Запрос к бд
+ * @param array $params Дополнительные параметры и их тип
+ * @return array Результат выполнения запроса в бд
+ */
+function prepare($sql, $params) {
+    $bd = bd();
+    $prepare = mysqli_prepare($bd, $sql);
+    foreach ($params as $key => $type) {
+        $types .= $type["type"];
+        $vars[] = $type["value"];
+    }
+
+    mysqli_stmt_bind_param($prepare, $types, ...$vars);
+
+    mysqli_stmt_execute($prepare);
+    $result = mysqli_stmt_get_result($prepare);
+
+    if($result->num_rows > 1) {
+        $result = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    } else {
+        $result = mysqli_fetch_assoc($result);
+    }
+
+    return $result;
+}
+
+/**
+ * Возвращает весь список категории
+ * @return array Результат выполнения запроса в бд
+ */
+function get_categories() {
+    return query("SELECT title, slug FROM categories");
+}
+
+/**
+ * Возвращает весь список активных лотов
+ * @return array Результат выполнения запроса в бд
+ */
+function get_active_lot() {
+    return query("SELECT l.id as lot_id, l.title, l.price, l.img, l.date_out, r.price as new_price, c.title as
+title_cat FROM lot l LEFT JOIN rate r ON l.id = r.lot_id JOIN categories c ON l.cat_id = c.id WHERE l.date_out >= NOW()
+ORDER BY l.date_up DESC");
+
+}
+
+/**
+ * Возвращает информацию по конкретному лоту
+ * @param int $id id лота в бд
+ * @return array Результат выполнения запроса в бд
+ */
+function get_lot($id) {
+    $params = [
+        "id" => [
+            "type" => "i",
+            "value" => $id
+        ]
+    ];
+    $result = prepare("SELECT l.title, l.description, l.img, l.price, l.date_out, c.title as title_cat FROM lot l
+JOIN categories c ON l.cat_id = c.id WHERE l.id = ?", $params);
+
+    return $result;
+}
 
