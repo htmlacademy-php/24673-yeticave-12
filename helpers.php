@@ -198,12 +198,10 @@ function get_lot_out_time($date_out) {
 
 /**
  * Выполняет запрос в бд и возвращает массив
- * @param string $bd Подключение к бд
  * @param string $sql Запрос к бд
- * @param string $type Тип запроса, если отличен от all извлекает один ряд в виде ассоциативного массива
  * @return array Результат выполнения запроса в бд
  */
-function query($sql, $type = "all") {
+function query($sql) {
     $bd = bd();
     $result = mysqli_query($bd, $sql);
 
@@ -211,7 +209,7 @@ function query($sql, $type = "all") {
         return $result;
     }
 
-    if($type = "all") {
+    if($result->num_rows > 1) {
         $result = mysqli_fetch_all($result, MYSQLI_ASSOC);
     } else {
         $result = mysqli_fetch_assoc($result);
