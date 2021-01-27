@@ -143,4 +143,82 @@ function include_template($name, array $data = []) {
     return $result;
 }
 
+/**
+ * Подключение к бд
+ */
+function bd() {
+    $bd = mysqli_connect("localhost", "root", "123", "yeticave");
+    mysqli_set_charset($bd,"utf8");
+    if(!$bd) {
+        die("Ошибка подключения");
+    }
+
+    return $bd;
+}
+
+
+/**
+ * Форматирует цену
+ * @param int $price Цена лота
+ * @return string Отформатировная цена
+ */
+function price_format($price) {
+    $price = ceil($price);
+
+    if($price >= 1000) {
+        $price = number_format($price, 0, '', ' ');
+    }
+    $price = $price.' ₽';
+
+    return $price;
+}
+
+/**
+ * Вычисляет сколько осталось часов и минут до окончания лота в формате: ЧЧ:ММ
+ * @param string $date_out Дата окончания лота
+ * @return array Ассоциативный массив с часами и минутами [ЧЧ. ММ]
+ */
+function get_lot_out_time($date_out) {
+    $hours = 0;
+    $minutes = 0;
+
+    $date_current = new DateTime();
+    $date_out = new DateTime($date_out);
+
+    $diff = $date_current->diff($date_out);
+
+    if (!$diff->invert) {
+        $hours = $diff->days * 24 + $diff->h;
+        $hours = str_pad($hours, 2, "0", STR_PAD_LEFT);
+        $minutes = str_pad($diff->i, 2, "0", STR_PAD_LEFT);
+    }
+
+    return [$hours, $minutes];
+}
+
+/**
+ * Выполняет запрос в бд и возвращает массив
+ * @param string $bd Подключение к бд
+ * @param string $sql Запрос к бд
+ * @param string $type Тип запроса, если отличен от all извлекает один ряд в виде ассоциативного массива
+ * @return array Результат выполнения запроса в бд
+ */
+function query($sql, $type = "all") {
+    $bd = bd();
+    $result = mysqli_query($bd, $sql);
+
+    if(!$result) {
+        return $result;
+    }
+
+    if($type = "all") {
+        $result = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    } else {
+        $result = mysqli_fetch_assoc($result);
+    }
+
+    return $result;
+
+}
+
 
