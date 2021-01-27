@@ -1,9 +1,14 @@
 <?php
 require ('helpers.php');
 $categories = get_categories();
-$lot = get_lot($_GET["id"]);
+$id = filter_input(INPUT_GET, 'id',FILTER_VALIDATE_INT);
+if($id) {
+    $lot = get_lot($id);
 
-if(!$lot) {
+    if(!$lot) {
+        http_response_code(404);
+    }
+} else {
     http_response_code(404);
 }
 

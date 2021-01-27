@@ -274,12 +274,6 @@ ORDER BY l.date_up DESC");
  * @return array Результат выполнения запроса в бд
  */
 function get_lot($id) {
-    $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
-
-    if(!$id) {
-        return $id;
-    }
-
     $params = [
         "id" => [
             "type" => "i",
